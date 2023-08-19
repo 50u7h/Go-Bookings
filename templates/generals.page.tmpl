@@ -44,17 +44,15 @@
         </div>
 
 
-
-
     </div>
 
 {{end}}
 
 
 {{define "js"}}
-<script>
-    document.getElementById("check-availability-button").addEventListener("click", function () {
-        let html = `
+    <script>
+        document.getElementById("check-availability-button").addEventListener("click", function () {
+            let html = `
         <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
             <div class="form-row">
                 <div class="col">
@@ -71,10 +69,21 @@
             </div>
         </form>
         `;
-        attention.custom({
-            title: 'Choose your dates',
-            msg: html,
-        });
-    })
-</script>
+            attention.custom({
+                title: 'Choose your dates',
+                msg: html,
+                callback: function (result) {
+                    console.log("called");
+
+                    fetch('/search-availability-json')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data);
+                            console.log(data.ok);
+                            console.log(data.message);
+                        })
+                }
+            });
+        })
+    </script>
 {{end}}
