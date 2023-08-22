@@ -32,5 +32,6 @@ func getSession() (*http.Request, error) {
 	ctx := r.Context()
 	ctx, _ = session.Load(ctx, r.Header.Get("X-Session"))
 	r = r.WithContext(ctx)
+	
 	return r, nil
 }
