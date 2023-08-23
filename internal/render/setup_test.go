@@ -5,6 +5,7 @@ import (
 	"github.com/50u7h/Go-Bookings/internal/config"
 	"github.com/50u7h/Go-Bookings/internal/models"
 	"github.com/alexedwards/scs/v2"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -21,6 +22,12 @@ func TestMain(m *testing.M) {
 	// change this to true when in production
 	testApp.InProduction = false
 
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
+	
 	// set up the session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
