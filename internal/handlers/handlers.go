@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/50u7h/Go-Bookings/internal/config"
+	"github.com/50u7h/Go-Bookings/internal/driver"
 	"github.com/50u7h/Go-Bookings/internal/forms"
 	"github.com/50u7h/Go-Bookings/internal/helpers"
 	"github.com/50u7h/Go-Bookings/internal/models"
 	"github.com/50u7h/Go-Bookings/internal/render"
+	"github.com/50u7h/Go-Bookings/internal/repository"
+	"github.com/50u7h/Go-Bookings/internal/repository/dbrepo"
 
 	"net/http"
 )
@@ -18,12 +21,14 @@ var Repo *Repository
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 

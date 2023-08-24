@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/50u7h/Go-Bookings/internal/config"
+	"github.com/50u7h/Go-Bookings/internal/driver"
 	"github.com/50u7h/Go-Bookings/internal/handlers"
 	"github.com/50u7h/Go-Bookings/internal/helpers"
 	"github.com/50u7h/Go-Bookings/internal/models"
@@ -24,11 +25,12 @@ var errorLog *log.Logger
 
 // main is the main function
 func main() {
+	db, err := run()
 
-	err := Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.SQL.Close()
 
 	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
 
@@ -41,7 +43,7 @@ func main() {
 	log.Fatal(err)
 }
 
-func Run() error {
+func run() (*driver.DB, error) {
 
 	// what am I going to put in the session
 	gob.Register(models.Reservation{})
@@ -63,19 +65,29 @@ func Run() error {
 
 	app.Session = session
 
+	// connect to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=" + password)
+
+	if err != nil {
+		log.Fatal("Cannot connect to database!")
+	}
+
+	log.Println("Connected to database!")
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }
