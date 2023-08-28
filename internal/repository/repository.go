@@ -5,5 +5,7 @@ import "github.com/50u7h/Go-Bookings/internal/models"
 type DatabaseRepo interface {
 	AllUsers() bool
 
-	InsertReservations(res models.Reservation) error
+	InsertReservations(res models.Reservation) (int, error)
+
+	InsertRoomRestriction(r models.RoomRestriction) error
 }
