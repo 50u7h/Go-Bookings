@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/50u7h/Go-Bookings/internal/config"
 	"github.com/50u7h/Go-Bookings/internal/driver"
 	"github.com/50u7h/Go-Bookings/internal/forms"
@@ -179,7 +180,20 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// send mail notification
+	// send mail notification - first to guest
+	htmlMessage := fmt.Sprintf(`
+		<strong>Reservation Confirmation</strong><br><br>
+		Dear %s %s, <br><br>
+		This is confirm your reservation from %s to %s.
+`, reservation.FirstName, reservation.LastName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	msg := models.MailData{
+		To:      reservation.Email,
+		From:    "test@test.com",
+		Subject: "Reservation Confirmation",
+		Content: htmlMessage,
+	}
+	m.App.MailChan <- msg
 
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 
