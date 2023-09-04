@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/50u7h/Go-Bookings/internal/models"
 	"log"
@@ -279,6 +280,40 @@ func TestRepository_PostReservation(t *testing.T) {
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("PostReservation handler failed when trying inserting restriction: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
+}
+
+func TestRepository_AvailabilityJSON(t *testing.T) {
+
+	// first case - rooms are not available
+	reqBody := "start_date=2050-01-01"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2050-01-02")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1000")
+
+	// create request
+	req, _ := http.NewRequest("POST", "/search-availability-json", strings.NewReader(reqBody))
+
+	// get context with session
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	// set the http header
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// make handler handlerfunc
+	handler := http.HandlerFunc(Repo.AvailabilityJSON)
+
+	// get response recorder
+	rr := httptest.NewRecorder()
+
+	// make request to handler
+	handler.ServeHTTP(rr, req)
+
+	var j jsonResponse
+	err := json.Unmarshal([]byte(rr.Body.String()), &j)
+	if err != nil {
+		t.Error("failed to parse json")
+	}
+
 }
 
 func getCtx(req *http.Request) context.Context {
