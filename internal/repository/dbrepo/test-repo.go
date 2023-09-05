@@ -97,7 +97,17 @@ func (m *testDBRepo) SearchAvailabilityForAllRooms(start, end time.Time) ([]mode
 // GetRoomByID gets a room by id
 func (m *testDBRepo) GetRoomByID(id int) (models.Room, error) {
 	var room models.Room
+	if id > 2 {
+		return room, errors.New("some error")
+	}
 	return room, nil
+}
+
+// GetUserByID gets a user by id
+func (m *testDBRepo) GetUserByID(id int) (models.User, error) {
+	var user models.User
+
+	return user, nil
 }
 
 // UpdateUser update a user
