@@ -385,7 +385,7 @@ func (m *postgresDBRepo) UpdateReservation(user models.Reservation) error {
 	defer cancel()
 
 	query := `
-		update reservations set first_name = $1, last_name =$2, email=$3, phone = $4, updated_at = $5
+		update reservations set first_name = $1, last_name =$2, email=$3, phone = $4, updated_at = $5 where id = $6
 		`
 	_, err := m.DB.ExecContext(ctx, query,
 		user.FirstName,
@@ -393,6 +393,7 @@ func (m *postgresDBRepo) UpdateReservation(user models.Reservation) error {
 		user.Email,
 		user.Phone,
 		time.Now(),
+		user.ID,
 	)
 	if err != nil {
 		return err
