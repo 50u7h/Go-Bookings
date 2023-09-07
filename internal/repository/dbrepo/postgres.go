@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/50u7h/Go-Bookings/internal/models"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"time"
 )
 
@@ -517,7 +518,6 @@ func (m *postgresDBRepo) GetRestrictionsForRoomByDate(roomID int, start, end tim
 	return restrictions, nil
 }
 
-/*
 // InsertBlockForRoom inserts a room restriction
 func (m *postgresDBRepo) InsertBlockForRoom(id int, startDate time.Time) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -532,9 +532,8 @@ func (m *postgresDBRepo) InsertBlockForRoom(id int, startDate time.Time) error {
 		return err
 	}
 	return nil
-}*/
+}
 
-/*
 // DeleteBlockByID deletes a room restriction
 func (m *postgresDBRepo) DeleteBlockByID(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -548,4 +547,4 @@ func (m *postgresDBRepo) DeleteBlockByID(id int) error {
 		return err
 	}
 	return nil
-}*/
+}
