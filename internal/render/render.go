@@ -8,6 +8,7 @@ import (
 	"github.com/50u7h/Go-Bookings/internal/models"
 	"github.com/justinas/nosurf"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -51,6 +52,7 @@ func FormatDate(t time.Time, f string) string {
 	return t.Format(f)
 }
 
+// AddDefaultData adds data for all templates
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Error = app.Session.PopString(r.Context(), "error")
@@ -62,7 +64,7 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	return td
 }
 
-// Template renders a template
+// Template renders templates using html/template
 func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) error {
 	var tc map[string]*template.Template
 
@@ -70,23 +72,27 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 		// get the template cache from the app config
 		tc = app.TemplateCache
 	} else {
+		// this is just used for testing, so that we rebuild
+		// the cache on every request
 		tc, _ = CreateTemplateCache()
 	}
 
 	t, ok := tc[tmpl]
 	if !ok {
-		return errors.New("could not get template from cache")
+		return errors.New("can't get template from cache")
 	}
 
 	buf := new(bytes.Buffer)
 
 	td = AddDefaultData(td, r)
 
-	_ = t.Execute(buf, td)
-
-	_, err := buf.WriteTo(w)
+	err := t.Execute(buf, td)
 	if err != nil {
-		fmt.Println("error writing template to browser", err)
+		log.Fatal(err)
+	}
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		fmt.Println("Error writing template to browser", err)
 		return err
 	}
 

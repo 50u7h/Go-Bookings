@@ -23,10 +23,9 @@ var session *scs.SessionManager
 var infoLog *log.Logger
 var errorLog *log.Logger
 
-// main is the main function
+// main is the main application function
 func main() {
 	db, err := run()
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,17 +33,10 @@ func main() {
 
 	defer close(app.MailChan)
 
-	fmt.Println("Starting Mail Listener...")
+	fmt.Println("Staring mail listener...")
 	listenForMail()
 
-	/*from := "me@here.com"
-	auth := smtp.PlainAuth("", from, "", "localhost")
-	err = smtp.SendMail("localhost:1025", auth, from, []string{"you@there.com"}, []byte("Hello!!!"))
-	if err != nil {
-		fmt.Println(err)
-	}*/
-
-	fmt.Println(fmt.Sprintf("Staring application on port %s", portNumber))
+	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
 	srv := &http.Server{
 		Addr:    portNumber,

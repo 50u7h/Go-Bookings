@@ -63,7 +63,7 @@ type RoomRestriction struct {
 	Restriction   Restriction
 }
 
-// MailData holds an email data
+// MailData holds an email message
 type MailData struct {
 	To       string
 	From     string

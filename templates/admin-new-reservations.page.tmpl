@@ -27,7 +27,7 @@
                 <tr>
                     <td>{{.ID}}</td>
                     <td>
-                        <a href="/admin/reservations/new/{{.ID}}">
+                        <a href="/admin/reservations/new/{{.ID}}/show">
                             {{.LastName}}
                         </a>
                     </td>
@@ -46,8 +46,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const dataTable = new simpleDatatables.DataTable("#new-res", {
-                select: 3,
-                sort: "desc",
+                select: 3, sort: "desc",
             })
         })
     </script>
